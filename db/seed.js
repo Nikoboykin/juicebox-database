@@ -1,29 +1,3 @@
-// grab our client with destructuring from the export in index.js
-// const { client } = require('./index');
-
-// async function testDB() {
-//   try {
-//     // connect the client to the database, finally
-//     client.connect();
-
-//     // queries are promises, so we can await them
-//     // const result = await client.query(`SELECT * FROM users;`);
-//     // const { rows } = await client.query(`SELECT * FROM users;`);
-//     // for now, logging is a fine way to see what's up
-//     // console.log(result);
-//     // 
-//     const users = await getAllUsers();
-//     console.log(users);
-//   } catch (error) {
-//     console.error(error);
-//   } finally {
-//     // it's important to close out the client connection
-//     client.end();
-//   }
-// }
-
-// testDB();
-
 
 const {
     client,
@@ -96,17 +70,6 @@ async function dropTables() {
     }
   }
   
-//   async function rebuildDB() {
-//     try {
-//       client.connect();
-  
-//       await dropTables();
-//       await createTables();
-//     } catch (error) {
-//       console.error(error);
-//     } 
-//   }
-
   async function testDB() {
   try {
     console.log("Starting to test database...");
