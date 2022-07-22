@@ -7,7 +7,7 @@ const {
   createPost,
   updatePost,
   getAllPosts,
-  getPostsByUser
+  getPostsByTagName
 } = require('./index');
 
 async function dropTables() {
@@ -54,8 +54,9 @@ async function createTables() {
         name varchar(255) UNIQUE NOT NULL 
       );
       CREATE TABLE post_tags(
-        "postId" INTEGER REFERENCES posts(id) UNIQUE NOT NULL,
-        "tagId" INTEGER REFERENCES tags(id) UNIQUE NOT NULL
+        "postId" INTEGER REFERENCES posts(id),
+        "tagId" INTEGER REFERENCES tags(id),
+        UNIQUE ("postId", "tagId")
       );
     `);
 
@@ -80,7 +81,7 @@ async function createInitialUsers() {
       username: 'sandra', 
       password: '2sandy4me',
       name: 'Just Sandra',
-      location: 'Ain\'t tellin\''
+      location: "Ain't tellin'"
     });
     await createUser({ 
       username: 'glamgal',
@@ -105,20 +106,21 @@ async function createInitialPosts() {
       authorId: albert.id,
       title: "First Post",
       content: "This is my first post. I hope I love writing blogs as much as I love writing them.",
-      tags: []
+      tags: ["#happy", "#youcandoanything"]
     });
 
     await createPost({
       authorId: sandra.id,
       title: "How does this work?",
       content: "Seriously, does this even do anything?",
-      tags: []
+      tags: ["#happy", "#worsy-day-ever"]
     });
 
     await createPost({
       authorId: glamgal.id,
       title: "Living the Glam Life",
       content: "Do you even? I swear that half of you are posing.", 
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"]
     });
     console.log("Finished creating posts!");
   } catch (error) {
@@ -143,38 +145,52 @@ async function rebuildDB() {
 
 async function testDB() {
   try {
-    console.log("Starting to test database...");
+      console.log('STARTING DATABASE');
 
-    console.log("Calling getAllUsers");
-    const users = await getAllUsers();
-    console.log("Result:", users);
+      console.log('GETTING USERS');
+      const users = await getAllUsers();
+      console.log("getAllUsers: ", users);
+      console.log('Got users!');
 
-    console.log("Calling updateUser on users[0]");
-    const updateUserResult = await updateUser(users[0].id, {
-      name: "Newname Sogood",
-      location: "Lesterville, KY"
-    });
-    console.log("Result:", updateUserResult);
+      console.log('UPDATING USER');
+      const updateUserResult = await updateUser(users[0].id, {
+          name: 'Niko',
+          location: 'London'
+      });
+      console.log("Update User Result: ", updateUserResult);
 
-    console.log("Calling getAllPosts");
-    const posts = await getAllPosts();
-    console.log("Result:", posts);
+      console.log("GETTING POSTS.");
+      const posts = await getAllPosts();
+      console.log("All Posts Result: ", posts);
+      console.log("Got all posts");
 
-    console.log("Calling updatePost on posts[0]");
-    const updatePostResult = await updatePost(posts[0].id, {
-      title: "New Title",
-      content: "Updated Content"
-    });
-    console.log("Result:", updatePostResult);
+      console.log("UPDATING POST");
+      const updatePostResult = await updatePost(posts[0].id, {
+          title: "Hello",
+          content: "Whats up everybody!!"
+      })
+      console.log("Update Post Result: ", updatePostResult);
+      console.log("done updating posts");
 
-    console.log("Calling getUserById with 1");
-    const albert = await getUserById(1);
-    console.log("Result:", albert);
+      console.log("UPDATING POST TAG ID 1");
+      const updatePostTagResult = await updatePost(posts[1].id, {
+          tags: ["#youcandoanything", "#redfish", "#bluefish"]
+      });
+      console.log("Result: ", updatePostTagResult);
 
-    console.log("Finished database tests!");
+      console.log("FETCHING USER WITH ID 1");
+      const albert = await getUserById(1);
+      console.log("Albert Result: ", albert);
+
+      console.log("ALL POSTS WITH #HAPPY TAG")
+      const postsWithHappy = await getPostsByTagName('#happy');
+      console.log("Result: ", postsWithHappy);
+      
+      console.log('FINISHED');
+
   } catch (error) {
-    console.log("Error during testDB");
-    throw error;
+      console.error("Error testing database!");
+      throw error;
   }
 }
 
