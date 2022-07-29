@@ -47,9 +47,6 @@ apiRouter.use((req, res, next) => {
 });
 
 
-apiRouter.get('/', (req, res) => {
-    console.log("made it here")
-})
 
 apiRouter.use((error, req, res, next) => {
     res.send({
